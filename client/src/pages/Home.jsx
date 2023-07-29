@@ -7,9 +7,16 @@ import {
   headTextAnimation,
   slideAnimation,
 } from "../config/motion"
+import state from "../store"
 
 const Home = () => {
-  return <div>Home</div>
+  const snap = useSnapshot(state)
+
+  return (
+    <div>
+      <AnimatePresence></AnimatePresence>
+    </div>
+  )
 }
 
 export default Home
