@@ -1,7 +1,7 @@
 import React from "react"
 
 const Backdrop = () => {
-  return <div>Backdrop</div>
+  return <group></group>
 }
 
 export default Backdrop
