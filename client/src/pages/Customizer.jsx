@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import { useSnapshot } from "valtio"
+
 import config from "../config/config"
 import state from "../store"
 import { download } from "../assets"
@@ -19,19 +20,20 @@ const Customizer = () => {
   const snap = useSnapshot(state)
 
   const [file, setFile] = useState("")
+
   const [prompt, setPrompt] = useState("")
   const [generatingImg, setGeneratingImg] = useState(false)
+
   // activeEditorTab and setActiveEditorTab: For managing the active editor tab (e.g., "colorpicker", "filepicker", "aipicker").
   const [activeEditorTab, setActiveEditorTab] = useState("")
 
   // activeFilterTab and setAciveFilterTab: For managing the active filter tab (e.g., "logoShirt", "stylishShirt").
-  const [activeFilterTab, setAciveFilterTab] = useState({
+  const [activeFilterTab, setActiveFilterTab] = useState({
     logoShirt: true,
     stylishShirt: false,
   })
 
   // show tab content depending on the activeTab
-
   const generateTabContent = () => {
     switch (activeEditorTab) {
       case "colorpicker":
@@ -44,30 +46,39 @@ const Customizer = () => {
         return null
     }
   }
-}
 
-const handleDecals = (type, result) => {
-  const decalType = DecalTypes[type]
+  const handleDecals = (type, result) => {
+    const decalType = DecalTypes[type]
 
-  state[decalType.stateProperty] = result
+    state[decalType.stateProperty] = result
 
-  if (!activeFilterTab[decalType.filterTab]) {
-    handleActiveFilterTab(decalType.filterTab)
+    if (!activeFilterTab[decalType.filterTab]) {
+      handleActiveFilterTab(decalType.filterTab)
+    }
   }
-}
 
-const handleActiveFilterTab = (tabName) => {
-  switch (tabName) {
-    case "logoShirt":
-      state.isLogoTexture = !activeFilterTab[tabName]
-      break
-    case "stylishShirt":
-      state.isFullTexture = !activeFilterTab[tabName]
-      break
-    default:
-      state.isLogoTexture = true
-      state.isFullTexture = false
-      break
+  const handleActiveFilterTab = (tabName) => {
+    switch (tabName) {
+      case "logoShirt":
+        state.isLogoTexture = !activeFilterTab[tabName]
+        break
+      case "stylishShirt":
+        state.isFullTexture = !activeFilterTab[tabName]
+        break
+      default:
+        state.isLogoTexture = true
+        state.isFullTexture = false
+        break
+    }
+
+    // after setting the state, activeFilterTab is updated
+
+    setActiveFilterTab((prevState) => {
+      return {
+        ...prevState,
+        [tabName]: !prevState[tabName],
+      }
+    })
   }
 
   // The readFile function is used to read a file and handles the logic when a file is read. It calls handleDecals to process the file data and then sets the activeEditorTab to an empty string.
