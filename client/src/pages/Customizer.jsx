@@ -21,27 +21,61 @@ const Customizer = () => {
   const [file, setFile] = useState("")
   const [prompt, setPrompt] = useState("")
   const [generatingImg, setGeneratingImg] = useState(false)
+  // activeEditorTab and setActiveEditorTab: For managing the active editor tab (e.g., "colorpicker", "filepicker", "aipicker").
   const [activeEditorTab, setActiveEditorTab] = useState("")
+
+  // activeFilterTab and setAciveFilterTab: For managing the active filter tab (e.g., "logoShirt", "stylishShirt").
   const [activeFilterTab, setAciveFilterTab] = useState({
     logoShirt: true,
     stylishShirt: false,
   })
 
   // show tab content depending on the activeTab
+
   const generateTabContent = () => {
     switch (activeEditorTab) {
       case "colorpicker":
         return <ColorPicker />
-
       case "filepicker":
-        return <FilePicker />
-
+        return <FilePicker file={file} setFile={setFile} readFile={readFile} />
       case "aipicker":
         return <AIPicker />
-
       default:
         return null
     }
+  }
+}
+
+const handleDecals = (type, result) => {
+  const decalType = DecalTypes[type]
+
+  state[decalType.stateProperty] = result
+
+  if (!activeFilterTab[decalType.filterTab]) {
+    handleActiveFilterTab(decalType.filterTab)
+  }
+}
+
+const handleActiveFilterTab = (tabName) => {
+  switch (tabName) {
+    case "logoShirt":
+      state.isLogoTexture = !activeFilterTab[tabName]
+      break
+    case "stylishShirt":
+      state.isFullTexture = !activeFilterTab[tabName]
+      break
+    default:
+      state.isLogoTexture = true
+      state.isFullTexture = false
+      break
+  }
+
+  // The readFile function is used to read a file and handles the logic when a file is read. It calls handleDecals to process the file data and then sets the activeEditorTab to an empty string.
+  const readFile = (type) => {
+    reader(file).then((result) => {
+      handleDecals(type, result)
+      setActiveEditorTab("")
+    })
   }
 
   return (
@@ -54,7 +88,7 @@ const Customizer = () => {
             {...slideAnimation("left")}
           >
             <div className="flex items-center min-h-screen">
-              <div className="editortabs-container-tabs">
+              <div className="editortabs-container tabs">
                 {EditorTabs.map((tab) => (
                   <Tab
                     key={tab.name}
@@ -62,6 +96,7 @@ const Customizer = () => {
                     handleClick={() => setActiveEditorTab(tab.name)}
                   />
                 ))}
+
                 {generateTabContent()}
               </div>
             </div>
@@ -88,8 +123,8 @@ const Customizer = () => {
                 key={tab.name}
                 tab={tab}
                 isFilterTab
-                isActiveTab=""
-                handleClick={() => {}}
+                isActiveTab={activeFilterTab[tab.name]}
+                handleClick={() => handleActiveFilterTab(tab.name)}
               />
             ))}
           </motion.div>
