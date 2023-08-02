@@ -4,7 +4,7 @@ const config = {
     backendUrl: "http://localhost:5000/api/v1/dalle",
   },
   production: {
-    backendUrl: "",
+    backendUrl: "https://shirtfusion-api.onrender.com/",
   },
 };
 
